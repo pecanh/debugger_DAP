@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxPanel" name="dlgDebuggerOptions_DAP">
+		<size>375,421</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<object class="wxBoxSizer">
+					<object class="sizeritem">
+						<object class="wxStaticText" name="m_staticText3">
+							<label>DAP Executable:</label>
+						</object>
+						<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="txtDAPExecutable" />
+						<flag>wxRIGHT|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="btnBrowse">
+							<label>...</label>
+							<style>wxBU_EXACTFIT</style>
+						</object>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer">
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT2">
+							<label>Network Port#:</label>
+						</object>
+						<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="txtPortNumber" />
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer">
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT_PythonHome">
+							<label>PYTHON Home:</label>
+						</object>
+						<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="txtPythonHome" />
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxStaticBoxSizer">
+					<label>Debugger initialization commands</label>
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="txtInit">
+							<enabled>0</enabled>
+							<style>wxTE_MULTILINE</style>
+						</object>
+						<flag>wxBOTTOM|wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT1">
+							<label>These commands will be sent to the debugger on each session start</label>
+							<fg>#800000</fg>
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxFlexGridSizer">
+					<cols>1</cols>
+					<vgap>4</vgap>
+					<growablecols>0</growablecols>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkRunDAPServer">
+							<label>Run DAP server</label>
+							<checked>1</checked>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkExceptionCatch">
+							<label>Enable exception C++ catch</label>
+							<checked>1</checked>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkExceptionThrow">
+							<label>Enable exception C++ throw</label>
+							<checked>1</checked>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkPersistDebugElements">
+							<label>Presist breakpoints,watches,memory views</label>
+							<tooltip>If enabled, the debugger will persist break points, watches and memory dump between sessions.</tooltip>
+						</object>
+						<flag>wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkWatchLocalsandArgs">
+							<label>Watch local vaiables and function arguments</label>
+							<enabled>0</enabled>
+							<hidden>1</hidden>
+							<tooltip>Automatic watches are added for the current local variables and function&apos;s arguments</tooltip>
+						</object>
+						<flag>wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkAddForeignDirs">
+							<label>Add other open projects&apos; paths in the debugger&apos;s search list</label>
+							<enabled>0</enabled>
+							<hidden>1</hidden>
+							<tooltip>If enabled, the other open projects&apos; paths will be added in the debugger&apos;s search list</tooltip>
+						</object>
+						<flag>wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkTooltipEval">
+							<label>Evaluate expression under cursor</label>
+							<enabled>1</enabled>
+							<hidden>0</hidden>
+							<tooltip>While debugging, leaving the mouse over a variable (or the selection) evaluates it in a tooltip</tooltip>
+						</object>
+						<flag>wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticBoxSizer">
+							<label>Choose directory configuration</label>
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxChoice" name="choChoiceDebugTesting">
+									<content>
+										<item>Use native paths</item>
+										<item>Use Linux paths on Windows with drive letter</item>
+										<item>Use Linux paths on Windows no collen</item>
+										<item>Use Linux paths on Windows no drive letter</item>
+										<item>Use Windows paths with drive letter removed</item>
+										<item>Use relative path compared to the executable</item>
+									</content>
+									<help>Debug Path Testing </help>
+								</object>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxStaticBoxSizer">
+					<label>Choose disassembly flavor</label>
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxBoxSizer">
+							<object class="sizeritem">
+								<object class="wxChoice" name="choDisassemblyFlavor">
+									<content>
+										<item>System default</item>
+										<item>AT&amp;T</item>
+										<item>Intel</item>
+										<item>Custom (specify instruction-set:)</item>
+									</content>
+									<enabled>0</enabled>
+								</object>
+								<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+							<object class="spacer">
+								<flag>wxALIGN_TOP</flag>
+								<size>5,0</size>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="txtInstructionSet">
+									<enabled>0</enabled>
+								</object>
+								<flag>wxEXPAND</flag>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+		</object>
+	</object>
+</resource>

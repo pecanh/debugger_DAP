@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Debugger WXDAP DLL unix" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debugger_WXDAP">
+				<Option output="../../../../devel30/debugger_wxdap" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../../devel30" />
+				<Option object_output="../../../../.objs30/debugger_wxdap" />
+				<Option type="3" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Option projectLinkerOptionsRelation="2" />
+			</Target>
+			<Environment>
+				<Variable name="WX_CONFIG" value="wx-config --version=3.0" />
+			</Environment>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debugger_WXDAP" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-std=c++11" />
+			<Add option="$(#CB_RELEASE_TYPE)" />
+			<Add option="-fPIC" />
+			<Add option="-pipe" />
+			<Add option="-fmessage-length=0" />
+			<Add option="-fexceptions" />
+			<Add option="-DcbDEBUG" />
+			<Add option="`$(WX_CONFIG) --cflags`" />
+			<Add option="`pkg-config --cflags codeblocks`" />
+			<Add directory="." />
+		</Compiler>
+		<Linker>
+			<Add option="`$(WX_CONFIG) --libs std`" />
+			<Add option="`pkg-config --libs codeblocks`" />
+		</Linker>
+		<Unit filename="resources/manifest.rc">
+			<Option compilerVar="WINDRES" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="cJSON.cpp" />
+		<Unit filename="cJSON.hpp" />
+		<Unit filename="Client.cpp" />
+		<Unit filename="Client.hpp" />
+		<Unit filename="CMakeLists.txt" />
+		<Unit filename="ConnectionString.cpp" />
+		<Unit filename="ConnectionString.hpp" />
+		<Unit filename="dap.cpp" />
+		<Unit filename="dap.hpp" />
+		<Unit filename="DAPEvent.cpp" />
+		<Unit filename="DAPEvent.hpp" />
+		<Unit filename="dap_exports.hpp" />
+		<Unit filename="Exception.cpp" />
+		<Unit filename="Exception.hpp" />
+		<Unit filename="JSON.cpp" />
+		<Unit filename="JSON.hpp" />
+		<Unit filename="JsonRPC.cpp" />
+		<Unit filename="JsonRPC.hpp" />
+		<Unit filename="linux.cpp" />
+		<Unit filename="Log.cpp" />
+		<Unit filename="Log.hpp" />
+		<Unit filename="msw.cpp" />
+		<Unit filename="Process.cpp" />
+		<Unit filename="Process.hpp" />
+		<Unit filename="Queue.hpp" />
+		<Unit filename="ServerProtocol.cpp" />
+		<Unit filename="ServerProtocol.hpp" />
+		<Unit filename="Socket.cpp" />
+		<Unit filename="Socket.hpp" />
+		<Unit filename="SocketClient.cpp" />
+		<Unit filename="SocketClient.hpp" />
+		<Unit filename="SocketServer.cpp" />
+		<Unit filename="SocketServer.hpp" />
+		<Unit filename="StringUtils.cpp" />
+		<Unit filename="StringUtils.hpp" />
+		<Unit filename="UnixProcess.cpp" />
+		<Unit filename="UnixProcess.hpp" />
+	</Project>
+</CodeBlocks_project_file>

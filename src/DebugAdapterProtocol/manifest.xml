@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_plugin_manifest_file>
+    <SdkVersion major="2" minor="16" release="0" />
+    <Plugin name="WXDAP">
+        <Value title="WXDAP" />
+        <Value version="0.0.1" />
+        <Value description="Provides a Debug Adapter Protocol DLL for client usage." />
+        <Value author="Eran Ifrah" />
+        <Value authorEmail="" />
+        <Value authorWebsite="https://github.com/eranif/dbgd" />
+        <Value thanksTo="" />
+        <Value license="See license.txt" />
+    </Plugin>
+</CodeBlocks_plugin_manifest_file>

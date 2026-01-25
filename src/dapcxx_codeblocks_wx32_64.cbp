@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Debugger WXDAP DLL" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../devel32_64/debugger_wxdap" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="../devel32_64" />
+				<Option object_output="../.objs32_64/debugger_wxdap" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-std=c++17" />
+					<Add option="-m64" />
+					<Add option="-gdwarf-4" />
+					<Add option="-O0" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+			<Environment>
+				<Variable name="WX_CFG" value="" />
+				<Variable name="WX_SUFFIX" value="u" />
+				<Variable name="WX_VERSION" value="32" />
+			</Environment>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="$(#CB_RELEASE_TYPE)" />
+			<Add option="-pipe" />
+			<Add option="-fmessage-length=0" />
+			<Add option="-fexceptions" />
+			<Add option="-mthreads" />
+			<Add option="-fno-keep-inline-dllexport" />
+			<Add option="-DBUILDING_PLUGIN" />
+			<Add option="-DHAVE_W32API_H" />
+			<Add option="-D__WXMSW__" />
+			<Add option="-DWXUSINGDLL" />
+			<Add option="-DcbDEBUG" />
+			<Add option="-DwxUSE_UNICODE" />
+			<Add option="-D_WIN64" />
+			<Add directory="." />
+			<Add directory="$(#WX32_64.include)" />
+			<Add directory="$(#WX32_64.lib)/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="$(#WX32_64.include)" />
+			<Add directory="$(#WX32_64)/lib/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
+		</ResourceCompiler>
+		<Linker>
+			<Add option="-mthreads" />
+			<Add option="-Wl,--enable-auto-image-base" />
+			<Add option="-Wl,--add-stdcall-alias" />
+			<Add option="-Wl,--enable-auto-import" />
+			<Add option="-Wl,--no-undefined" />
+			<Add library="wxmsw$(WX_VERSION)$(WX_SUFFIX)" />
+			<Add library="ws2_32" />
+			<Add directory="$(#WX32_64.lib)/gcc_dll$(WX_CFG)" />
+		</Linker>
+		<Unit filename="DebugAdapterProtocol\CMakeLists.txt" />
+		<Unit filename="DebugAdapterProtocol\Client.cpp" />
+		<Unit filename="DebugAdapterProtocol\Client.hpp" />
+		<Unit filename="DebugAdapterProtocol\ConnectionString.cpp" />
+		<Unit filename="DebugAdapterProtocol\ConnectionString.hpp" />
+		<Unit filename="DebugAdapterProtocol\DAPEvent.cpp" />
+		<Unit filename="DebugAdapterProtocol\DAPEvent.hpp" />
+		<Unit filename="DebugAdapterProtocol\Exception.cpp" />
+		<Unit filename="DebugAdapterProtocol\Exception.hpp" />
+		<Unit filename="DebugAdapterProtocol\JSON.cpp" />
+		<Unit filename="DebugAdapterProtocol\JSON.hpp" />
+		<Unit filename="DebugAdapterProtocol\JsonRPC.cpp" />
+		<Unit filename="DebugAdapterProtocol\JsonRPC.hpp" />
+		<Unit filename="DebugAdapterProtocol\Log.cpp" />
+		<Unit filename="DebugAdapterProtocol\Log.hpp" />
+		<Unit filename="DebugAdapterProtocol\Process.cpp" />
+		<Unit filename="DebugAdapterProtocol\Process.hpp" />
+		<Unit filename="DebugAdapterProtocol\Queue.hpp" />
+		<Unit filename="DebugAdapterProtocol\ServerProtocol.cpp" />
+		<Unit filename="DebugAdapterProtocol\ServerProtocol.hpp" />
+		<Unit filename="DebugAdapterProtocol\Socket.cpp" />
+		<Unit filename="DebugAdapterProtocol\Socket.hpp" />
+		<Unit filename="DebugAdapterProtocol\SocketClient.cpp" />
+		<Unit filename="DebugAdapterProtocol\SocketClient.hpp" />
+		<Unit filename="DebugAdapterProtocol\SocketServer.cpp" />
+		<Unit filename="DebugAdapterProtocol\SocketServer.hpp" />
+		<Unit filename="DebugAdapterProtocol\StringUtils.cpp" />
+		<Unit filename="DebugAdapterProtocol\StringUtils.hpp" />
+		<Unit filename="DebugAdapterProtocol\UnixProcess.cpp" />
+		<Unit filename="DebugAdapterProtocol\UnixProcess.hpp" />
+		<Unit filename="DebugAdapterProtocol\cJSON.cpp" />
+		<Unit filename="DebugAdapterProtocol\cJSON.hpp" />
+		<Unit filename="DebugAdapterProtocol\dap.cpp" />
+		<Unit filename="DebugAdapterProtocol\dap.hpp" />
+		<Unit filename="DebugAdapterProtocol\dap_exports.hpp" />
+		<Unit filename="DebugAdapterProtocol\linux.cpp" />
+		<Unit filename="DebugAdapterProtocol\manifest.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="DebugAdapterProtocol\msw.cpp" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

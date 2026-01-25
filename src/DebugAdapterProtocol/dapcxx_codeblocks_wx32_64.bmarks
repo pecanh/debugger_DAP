@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<BrowseTracker_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="cJSON.hpp" open="0" top="0" tabpos="3">
+		<Cursor position="1426" topLine="90" />
+	</File>
+	<File name="Process.hpp" open="0" top="0" tabpos="3">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="Client.hpp" open="0" top="0" tabpos="4">
+		<Cursor position="5429" topLine="154" />
+	</File>
+	<File name="Socket.hpp" open="0" top="0" tabpos="6">
+		<Cursor position="1367" topLine="101" />
+	</File>
+	<File name="JSON.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="2326" topLine="79" />
+	</File>
+	<File name="ServerProtocol.hpp" open="0" top="0" tabpos="5">
+		<Cursor position="375" topLine="8" />
+	</File>
+	<File name="DAPEvent.hpp" open="0" top="0" tabpos="2">
+		<Cursor position="135" topLine="7" />
+	</File>
+	<File name="Log.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="854" topLine="29" />
+	</File>
+	<File name="JsonRPC.hpp" open="0" top="0" tabpos="3">
+		<Cursor position="1565" topLine="50" />
+	</File>
+	<File name="dap.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="29054" topLine="932" />
+	</File>
+	<File name="manifest.rc" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="Client.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="32560" topLine="927" />
+		<BrowseMarks positions="13970" />
+	</File>
+	<File name="dap.hpp" open="1" top="0" tabpos="3">
+		<Cursor position="32253" topLine="942" />
+	</File>
+	<File name="cJSON.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="DAPEvent.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="929" topLine="7" />
+	</File>
+	<File name="Socket.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="SocketServer.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="32" />
+	</File>
+	<File name="JsonRPC.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="1864" topLine="43" />
+	</File>
+	<File name="SocketClient.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1452" topLine="48" />
+	</File>
+	<File name="msw.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="86" topLine="144" />
+	</File>
+	<File name="JSON.hpp" open="0" top="0" tabpos="6">
+		<Cursor position="4521" topLine="153" />
+	</File>
+</BrowseTracker_layout_file>

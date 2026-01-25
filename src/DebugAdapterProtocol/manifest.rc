@@ -1,0 +1,59 @@
+// Code::Blocks resource file generated from the manifext.xml file
+
+#include "wx/msw/wx.rc"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+VS_VERSION_INFO        VERSIONINFO
+  FILEVERSION          0,0,1
+  PRODUCTVERSION       2022,06,23,01
+  FILEFLAGSMASK        0x3fL // VS_FFI_FILEFLAGSMASK
+  // FILEFLAGS Can be a combination of the following OR'ed flags:
+  //    VS_FF_DEBUG,        VS_FF_PATCHED,      VS_FF_PRERELEASE,
+  //    VS_FF_PRIVATEBUILD, VS_FF_SPECIALBUILD, VS_FFI_FILEFLAGSMASK
+#ifdef __WXDEBUG__
+  FILEFLAGS            0x1L  // VS_FF_DEBUG|VS_FF_PRIVATEBUILD|VS_FF_PRERELEASE
+#else
+  FILEFLAGS            0x0L  // final version
+#endif
+  FILEOS               VOS_NT_WINDOWS32
+  // FILETYPE Can be one of the following values:
+  //   VFT_UNKNOWN, VFT_APP, VFT_DLL, VFT_DRV, VFT_FONT, VFT_VXD, VFT_STATIC_LIB
+  FILETYPE             VFT_DLL
+  FILESUBTYPE          VFT2_UNKNOWN // not used
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040904E4" // Lang=US English, CharSet=Windows Multilingual
+    {
+      VALUE "Build",             "23-Jun-2022"
+      VALUE "Comments",          "Provides a Debug Adapter Protocol DLL for client usage."
+      VALUE "CompanyName",       "Eran Ifrah"
+      VALUE "Developer",         "Eran Ifrah"
+      VALUE "FileVersion",       "0.0.1"
+      VALUE "InternalName",      "WXDAP"
+      VALUE "LegalCopyright",    "See license.txt"
+      VALUE "LegalTrademarks",   "All rights reserved."
+      VALUE "OriginalFilename",  "WXDAP.dll"
+      VALUE "PrivateBuild",      ""
+      VALUE "ProductName",       "WXDAP"
+      VALUE "ProductVersion",    "0.0.1"
+      VALUE "SpecialBuild",      ""
+      VALUE "Support",           "https://github.com/eranif/dbgd"
+      VALUE "Users",             ""
+    } // BLOCK "040904E4"
+  } // BLOCK "StringFileInfo"
+
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation", 0x409, 1252 // 1252 = 0x04E4
+
+    // langID, one of the following language codes.
+    // 0x409 : U.S. English
+    // 0x809 : U.K. English
+    // charsetID, one of the following character-set identifiers.
+    // 1200 : Unicode
+    // 1252 : CharSet=Windows Multilingual
+  } // BLOCK "VarFileInfo"
+
+}

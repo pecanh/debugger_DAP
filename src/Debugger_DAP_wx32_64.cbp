@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Debugger DAP Plugin wx3.2.x (64 bit)" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../devel32_64/debugger_dap" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="../devel32_64" />
+				<Option object_output="../.objs32_64/plugins/debugger_dap" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option parameters="--debug-log --no-dde --no-check-associations --multiple-instance --no-splash-screen --verbose -p cbDebugDap" />
+				<Option host_application="$(CODEBLOCKS)/../devel32_64/codeblocks.exe" />
+				<Option run_host_application_in_terminal="0" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-std=c++17" />
+					<Add option="-m64" />
+					<Add option="-gdwarf-4" />
+					<Add option="-O0" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="cmd /c if not exist $(TARGET_OUTPUT_DIR) mkdir $(TARGET_OUTPUT_DIR)" />
+					<Add after="cmd /c if exist ..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip  del ..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip" />
+					<Add after="zip -jq9 ..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip resources/manifest.xml resources/*.xrc" />
+					<Add after="cmd /c copy ..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip  $(#cb)\devel32_64\share\codeblocks\" />
+					<Add after="cmd /c copy ..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip  $(#cb)\output32_64\share\codeblocks\" />
+					<Add after="cmd /c copy /Y $(TARGET_OUTPUT_DIR)\debugger_dap.dll  $(#cb)\devel32_64\share\codeblocks\plugins\" />
+					<Add after="cmd /c copy /Y $(TARGET_OUTPUT_DIR)\debugger_wxdap.dll  $(#cb)\devel32_64\" />
+				</ExtraCommands>
+			</Target>
+			<Environment>
+				<Variable name="WX_CFG" value="" />
+				<Variable name="WX_SUFFIX" value="u" />
+				<Variable name="WX_VERSION" value="32" />
+			</Environment>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="$(#CB_RELEASE_TYPE)" />
+			<Add option="-pipe" />
+			<Add option="-fmessage-length=0" />
+			<Add option="-fexceptions" />
+			<Add option="-mthreads" />
+			<Add option="-DBUILDING_PLUGIN" />
+			<Add option="-DHAVE_W32API_H" />
+			<Add option="-D__WXMSW__" />
+			<Add option="-DWXUSINGDLL" />
+			<Add option="-DcbDEBUG" />
+			<Add option="-DwxUSE_UNICODE" />
+			<Add option="-D_WIN64" />
+			<Add directory="./DebugAdapterProtocol" />
+			<Add directory="./src" />
+			<Add directory="./tinyxml2" />
+			<Add directory="$(#cb)/include" />
+			<Add directory="$(#cb)/include/tinyxml" />
+			<Add directory="$(#cb)/sdk/wxscintilla/include" />
+			<Add directory="$(#WX32_64.include)" />
+			<Add directory="$(#WX32_64.lib)/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="$(#WX32_64.include)" />
+			<Add directory="$(#WX32_64)/lib/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
+		</ResourceCompiler>
+		<Linker>
+			<Add option="-mthreads" />
+			<Add option="-Wl,--enable-auto-image-base" />
+			<Add option="-Wl,--add-stdcall-alias" />
+			<Add option="-Wl,--enable-auto-import" />
+			<Add option="-Wl,--no-undefined" />
+			<Add library="wxmsw$(WX_VERSION)$(WX_SUFFIX)" />
+			<Add library="ws2_32" />
+			<Add library="codeblocks" />
+			<Add library="debugger_wxdap" />
+			<Add directory="../devel32_64" />
+			<Add directory="$(#WX32_64.lib)/gcc_dll$(WX_CFG)" />
+			<Add directory="$(#cb)/devel32_64" />
+		</Linker>
+		<Unit filename="DebugAdapterClient/DAP_Breakpoints.cpp" />
+		<Unit filename="DebugAdapterClient/DAP_Breakpoints.h" />
+		<Unit filename="DebugAdapterClient/DAP_CallStack.cpp" />
+		<Unit filename="DebugAdapterClient/DAP_CallStack.h" />
+		<Unit filename="DebugAdapterClient/DAP_Debugger_State.cpp" />
+		<Unit filename="DebugAdapterClient/DAP_Debugger_State.h" />
+		<Unit filename="DebugAdapterClient/DAP_Terminal_Panel.cpp" />
+		<Unit filename="DebugAdapterClient/DAP_Terminal_Panel.h" />
+		<Unit filename="DebugAdapterClient/DAP_Watches.cpp" />
+		<Unit filename="DebugAdapterClient/DAP_Watches.h" />
+		<Unit filename="DebugAdapterClient/debugger_logger.cpp" />
+		<Unit filename="DebugAdapterClient/debugger_logger.h" />
+		<Unit filename="DebugAdapterClient/definitions.cpp" />
+		<Unit filename="DebugAdapterClient/definitions.h" />
+		<Unit filename="DebugAdapterClient/dlg_ProjectOptions.cpp" />
+		<Unit filename="DebugAdapterClient/dlg_ProjectOptions.h" />
+		<Unit filename="DebugAdapterClient/dlg_SettingsOptions.cpp" />
+		<Unit filename="DebugAdapterClient/dlg_SettingsOptions.h" />
+		<Unit filename="DebugAdapterClient/dlg_WatchEdit.cpp" />
+		<Unit filename="DebugAdapterClient/dlg_WatchEdit.h" />
+		<Unit filename="DebugAdapterClient/dlg_databreakpoint.cpp" />
+		<Unit filename="DebugAdapterClient/dlg_databreakpoint.h" />
+		<Unit filename="DebugAdapterClient/dlg_editbreakpoint.cpp" />
+		<Unit filename="DebugAdapterClient/dlg_editbreakpoint.h" />
+		<Unit filename="DebugAdapterClient/helpers.cpp" />
+		<Unit filename="DebugAdapterClient/helpers.h" />
+		<Unit filename="DebugAdapterClient/plugin.cpp" />
+		<Unit filename="DebugAdapterClient/plugin.h" />
+		<Unit filename="resources/breakpoints_DAP_dlg.xrc" />
+		<Unit filename="resources/debugger_DAP_options_dlg.xrc" />
+		<Unit filename="resources/debugger_DAP_project_options_dlg.xrc" />
+		<Unit filename="resources/edit_watches_DAP_dlg.xrc" />
+		<Unit filename="resources/manifest.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="resources/manifest.xml" />
+		<Unit filename="tinyxml2/tinyxml2.cpp" />
+		<Unit filename="tinyxml2/tinyxml2.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
