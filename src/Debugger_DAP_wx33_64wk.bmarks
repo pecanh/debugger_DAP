@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<BrowseTracker_layout_file>
+	<ActiveTarget name="All" />
+	<File name="tinyxml2\tinyxml2.h" open="0" top="0" tabpos="6">
+		<Cursor position="15799" topLine="605" />
+	</File>
+	<File name="DebugAdapterClient\DAP_CallStack.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="10035" topLine="205" />
+	</File>
+	<File name="DebugAdapterClient\DAP_Breakpoints.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="29705" topLine="648" />
+	</File>
+	<File name="DebugAdapterClient\DAP_Watches.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="25036" topLine="555" />
+	</File>
+	<File name="DebugAdapterClient\definitions.h" open="0" top="0" tabpos="0">
+		<Cursor position="13999" topLine="453" />
+	</File>
+	<File name="DebugAdapterClient\plugin.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="69676" topLine="1490" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="DebugAdapterClient\plugin.h" open="1" top="0" tabpos="2">
+		<Cursor position="5716" topLine="114" />
+	</File>
+	<File name="DebugAdapterProtocol\Client.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="33325" topLine="953" />
+	</File>
+</BrowseTracker_layout_file>

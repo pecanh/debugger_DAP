@@ -56,7 +56,7 @@ class Debugger_DAP : public cbDebuggerPlugin
         virtual bool SupportsFeature(cbDebuggerFeature::Flags flag);
         virtual cbDebuggerConfiguration * LoadConfig(const ConfigManagerWrapper & config);
         dbg_DAP::DebuggerConfiguration & GetActiveConfigEx();
-        cbConfigurationPanel * GetProjectConfigurationPanel(wxWindow * parent, cbProject * project);
+        cbConfigurationPanel* GetProjectConfigurationPanel(wxWindow * parent, cbProject * project);
         virtual bool Debug(bool breakOnEntry);
 
         // Debug control
@@ -131,7 +131,7 @@ class Debugger_DAP : public cbDebuggerPlugin
         virtual bool ShowValueTooltip(int style);
         void EvaluateExpressionWithCallback(const wxString & token, const wxRect & evalRect); //(ph 2024/05/30)
         void EvaluateExpressionCallback(bool success, const wxString& result, const wxString& type, int variablesReference, const wxString& text,const wxRect& evalRect); //(ph 2024/05/30)
-        //(ph 2024/10/10)
+        // Memory
         void GetMemoryWithCallback(const wxString& addrStr, const int count);
         void GetMemoryCallback(bool success, const wxString& result, const wxString& type, int variablesReference, const wxString& text);
         bool ParseExamineMemoryLine(wxString &resultAddr, std::vector<uint8_t> &resultValues,
@@ -265,9 +265,11 @@ class Debugger_DAP : public cbDebuggerPlugin
         void OnContinuedEvent(DAPEvent & event);
         void OnDebugPYWaitingForServerEvent(DAPEvent & event);
         void OnDisassembleResponse(DAPEvent& event); //(ph 2024/08/26)
+        void OnReadMemoryResponse(DAPEvent& event);
         void OnGotoResponse(DAPEvent& event);        //(ph 2024/11/08)
         void OnGotoTargetsResponse(DAPEvent& event); //(ph 2024/11/12)
 
+        wxString GetDapErrorMessage(DAPEvent& event); // (ph 26/08/11)
 
         // DAP Capabilities
         // Configured for a default of false and updated in the DAP debugger capability response message
@@ -398,6 +400,8 @@ class Debugger_DAP : public cbDebuggerPlugin
 
     private:
         void OnEditorOpened(CodeBlocksEvent& event);
+
+        wxEnvVariableHashMap m_debuggeeEnv;
 
 };//endClass Debugger_DAP
 

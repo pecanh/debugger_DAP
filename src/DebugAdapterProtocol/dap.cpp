@@ -58,6 +58,7 @@ void Initialize()
     REGISTER_CLASS(DisassembleRequest); //(ph 2024/08/26)
     REGISTER_CLASS(GotoRequest);        //(ph 2024/11/08)
     REGISTER_CLASS(GotoTargetsRequest); //(ph 2024/11/11)
+    REGISTER_CLASS(ReadMemoryRequest);
 
     REGISTER_CLASS(InitializedEvent);
     REGISTER_CLASS(StoppedEvent);
@@ -97,6 +98,7 @@ void Initialize()
     REGISTER_CLASS(DisassembleResponse);
     REGISTER_CLASS(GotoResponse);
     REGISTER_CLASS(GotoTargetsResponse);    //(ph 2024/11/12)
+    REGISTER_CLASS(ReadMemoryResponse);
     // Needed for windows socket library
     Socket::Initialize();
 }
@@ -679,6 +681,7 @@ void InitializeResponse::From(const Json & json)
         CAPABILITIES_BODY_PROCESS(capabilities.supportSuspendDebuggee, "supportSuspendDebuggee")
         CAPABILITIES_BODY_PROCESS(capabilities.supportsValueFormattingOptions, "supportsValueFormattingOptions")
         CAPABILITIES_BODY_PROCESS(capabilities.supportsWriteMemoryRequest, "supportsWriteMemoryRequest")
+        CAPABILITIES_BODY_PROCESS(capabilities.supportsReadMemoryRequest, "supportsReadMemoryRequest")
         CAPABILITIES_BODY_PROCESS(capabilities.supportTerminateDebuggee, "supportTerminateDebuggee")
 
         if (body["exceptionBreakpointFilters"].IsOK())
@@ -2282,6 +2285,58 @@ void GotoTargetsInfo::From(const Json & json) //(ph 2024/11/11)
     GET_PROP(endLine, Integer);
     GET_PROP(endColumn, Integer);
     GET_PROP(instructionPointerReference, String);
+}
+
+// ----------------------------------------
+//  --------- ReadMemory ------------------
+// ----------------------------------------
+
+Json ReadMemoryArguments::To() const
+{
+    CREATE_JSON();
+    ADD_PROP(memoryReference);
+    ADD_PROP(offset);
+    ADD_PROP(count);
+    return json;
+}
+
+void ReadMemoryArguments::From(const Json & json)
+{
+    GET_PROP(memoryReference, String);
+    GET_PROP(offset, Integer);
+    GET_PROP(count, Integer);
+}
+
+Json ReadMemoryRequest::To() const
+{
+    REQUEST_TO();
+    ADD_OBJ(arguments);
+    return json;
+}
+
+void ReadMemoryRequest::From(const Json & json)
+{
+    Request::From(json);
+    arguments.From(json["arguments"]);
+}
+
+Json ReadMemoryResponse::To() const
+{
+    RESPONSE_TO();
+    ADD_BODY();
+    ADD_BODY_PROP(address);
+    ADD_BODY_PROP(unreadableBytes);
+    ADD_BODY_PROP(data);
+    return json;
+}
+
+void ReadMemoryResponse::From(const Json & json)
+{
+    Response::From(json);
+    READ_BODY();
+    GET_BODY_PROP(address, String);
+    GET_BODY_PROP(unreadableBytes, Integer);
+    GET_BODY_PROP(data, String);
 }
 
 }; // end namespace dap

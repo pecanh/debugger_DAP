@@ -159,6 +159,7 @@ Debugger_DAP::Debugger_DAP()
     m_dapClient.Bind(wxEVT_DAP_CONTINUED_EVENT,                 &Debugger_DAP::OnContinuedEvent,        this);
     m_dapClient.Bind(wxEVT_DAP_DEBUGPYWAITINGFORSERVER_EVENT,   &Debugger_DAP::OnDebugPYWaitingForServerEvent, this);
     m_dapClient.Bind(wxEVT_DAP_DISASSEMBLE_RESPONSE,            &Debugger_DAP::OnDisassembleResponse,   this);  //(ph 2024/08/26)
+    m_dapClient.Bind(wxEVT_DAP_READ_MEMORY_RESPONSE,            &Debugger_DAP::OnReadMemoryResponse,    this);
     m_dapClient.Bind(wxEVT_DAP_GOTO_RESPONSE,                   &Debugger_DAP::OnGotoResponse,          this);  //(ph 2024/11/08)
     m_dapClient.Bind(wxEVT_DAP_GOTOTARGETS_RESPONSE,            &Debugger_DAP::OnGotoTargetsResponse,   this);  //(ph 2024/11/12)
     m_dapClient.Bind(wxEVT_DAP_ATTACH_RESPONSE_EVENT,           &Debugger_DAP::OnAttachToProcessResponse,this);  // (ph 25/10/01)
@@ -170,7 +171,7 @@ Debugger_DAP::Debugger_DAP()
     pDAPWatches = new DBG_DAP_Watches(this, m_pLogger, &m_dapClient);
     //(ph 2024/08/12)
     //wxString disasmFlavour = GetActiveConfigEx().GetDisassemblyFlavorCommand();
-    wxString disasmFlavour = wxString();
+    //wxString disasmFlavour = wxString();
     // Initialize the DAPRegisters dialog pointer
     if (pDAPWatches)
         pDAPRegisters = pDAPWatches->GetInfoRegisters();
@@ -207,6 +208,7 @@ Debugger_DAP::~Debugger_DAP() //dtor
     m_dapClient.Unbind(wxEVT_DAP_CONTINUED_EVENT,                 &Debugger_DAP::OnContinuedEvent,           this);
     m_dapClient.Unbind(wxEVT_DAP_DEBUGPYWAITINGFORSERVER_EVENT,   &Debugger_DAP::OnDebugPYWaitingForServerEvent,  this);
     m_dapClient.Unbind(wxEVT_DAP_DISASSEMBLE_RESPONSE,            &Debugger_DAP::OnDisassembleResponse,      this); //(ph 2024/08/26)
+    m_dapClient.Unbind(wxEVT_DAP_READ_MEMORY_RESPONSE,            &Debugger_DAP::OnReadMemoryResponse,       this);
     m_dapClient.Unbind(wxEVT_DAP_GOTO_RESPONSE,                   &Debugger_DAP::OnGotoResponse,             this); //(ph 2024/11/08)
     m_dapClient.Unbind(wxEVT_DAP_GOTOTARGETS_RESPONSE,            &Debugger_DAP::OnGotoTargetsResponse,      this); //(ph 2024/11/12)
 
@@ -565,7 +567,7 @@ int Debugger_DAP::StartDebugger(cbProject* project, StartType start_type)
     if (not fnDebugger.GetFullName().Lower().Contains("lldb"))
     {
         m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, wxString::Format(_("Cannot find lldb dap type debugger. Currently set to: %s"), dap_debugger), dbg_DAP::LogPaneLogger::LineType::Error);
-        return 5;
+        //?return 5; // (ph 26/08/09) testing gdb with DAP interface
     }
 
     wxString dap_port_number = GetActiveConfigEx().GetDAP_PortNumber();
@@ -665,126 +667,168 @@ int Debugger_DAP::StartDebugger(cbProject* project, StartType start_type)
 }
 
 // ----------------------------------------------------------------------------
-void Debugger_DAP::LaunchDAPDebugger(cbProject* project, const wxString& dap_debugger, const wxString& dap_port_number)
+void Debugger_DAP::LaunchDAPDebugger(cbProject* project,
+                                     const wxString& dap_debugger,
+                                     const wxString& dap_port_number)
 // ----------------------------------------------------------------------------
 {
-    Compiler* compiler;
-    ProjectBuildTarget* target;
-    //SelectCompiler(*project, compiler, target, 0);
-    SelectCompiler(*project, compiler, target, m_pid_attached); //(ph 2025/01/23)
+    Compiler* compiler = nullptr;
+    ProjectBuildTarget* target = nullptr;
 
-    m_DapDebuggerPortArgFormat = wxString();
-    bool found = dbg_DAP::FindPortArgFormat(dap_debugger, m_DapDebuggerPortArgFormat); // (ph 26/01/19)
-    if (not found)
+    SelectCompiler(*project, compiler, target, m_pid_attached);
+
+    m_DapDebuggerPortArgFormat.clear();
+
+    if (!dbg_DAP::FindPortArgFormat(dap_debugger, m_DapDebuggerPortArgFormat))
     {
-        // Issue not found for the port argument parameter
-        m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, wxString::Format(_("dap Debugger: %s --help found no --port or --connection parameter"), dap_debugger), dbg_DAP::LogPaneLogger::LineType::Error);
-        return ;
-    }
-    else //found the format for the --port or --connection parameter
-    {
-        m_DapDebuggerPortArgFormat.Replace("<port>", dap_port_number);
+        m_pLogger->LogDAPMsgType(
+            __PRETTY_FUNCTION__,
+            __LINE__,
+            wxString::Format(
+                _("dap Debugger: %s --help found no --port or --connection parameter"),
+                dap_debugger),
+            dbg_DAP::LogPaneLogger::LineType::Error);
+        return;
     }
 
-    //-wxString dapStartCmd = wxString::Format("%s --port %s", dap_debugger, dap_port_number);
-    wxString dapStartCmd = wxString::Format("%s %s", dap_debugger, m_DapDebuggerPortArgFormat); // (ph 26/01/19)
-    m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, wxString::Format(_("dapStartCmd: %s"), dapStartCmd), dbg_DAP::LogPaneLogger::LineType::UserDisplay);
-    // Setup the environment
+    m_DapDebuggerPortArgFormat.Replace("<port>", dap_port_number);
+
+    const wxString dapStartCmd =
+        wxString::Format("%s %s", dap_debugger, m_DapDebuggerPortArgFormat);
+
+    m_pLogger->LogDAPMsgType(
+        __PRETTY_FUNCTION__,
+        __LINE__,
+        wxString::Format(_("dapStartCmd: %s"), dapStartCmd),
+        dbg_DAP::LogPaneLogger::LineType::UserDisplay);
+
     wxFileName debuggerFN(dap_debugger);
     wxString wdir = debuggerFN.GetPath();
 
     if (wdir.empty())
-    {
-        wdir = m_pProject ? m_pProject->GetBasePath() : _T(".");
-    }
+        wdir = m_pProject ? m_pProject->GetBasePath() : ".";
 
     wxExecuteEnv execEnv;
     execEnv.cwd = wdir;
 
-    // Read the current environment variables and then make changes to them.
-    wxGetEnvMap(&execEnv.env);
+    // Capture Code::Blocks' original environment before adding the
+    // DAP-adapter-specific paths.
+    wxGetEnvMap(&m_debuggeeEnv);
 
-  #ifndef __WXMAC__ //if not WXMAC
+    // Start the lldb-dap environment from the original environment.
+    execEnv.env = m_debuggeeEnv;
+
+#ifndef __WXMAC__
     wxString oldLibPath;
     wxGetEnv(CB_LIBRARY_ENVVAR, &oldLibPath);
-    wxString newLibPath = GetLibraryPath(oldLibPath, compiler, target, project);
+
+    wxString newLibPath =
+        GetLibraryPath(oldLibPath, compiler, target, project);
+
     execEnv.env[CB_LIBRARY_ENVVAR] = newLibPath;
 
-    #if defined __WXMSW__
-    // For windows CB_LIBRARY_ENVVAR and PATH are the same.
-    // if using codelldb, add it's python path to the executable systems path. //(ph 2024/12/09)
-    oldLibPath = execEnv.env["PATH"];  // Get PATH from execEnv variable above
-    if ( dap_debugger.Lower().EndsWith("codelldb.exe") )
+#if defined(__WXMSW__)
+    // On Windows, CB_LIBRARY_ENVVAR is PATH.
+    //
+    // This PATH is exclusively for <DAP>.exe. (ie., lldb_dap.exe).
+    // It intentionally puts the directory containing DAP adapter first,
+    // so its runtime DLLs and Python support can be found.
+    oldLibPath = execEnv.env["PATH"];
+
+    if (dap_debugger.Lower().EndsWith("codelldb.exe"))
     {
         newLibPath = debuggerFN.GetPath();
         newLibPath.Replace("adapter", "lldb");
-        newLibPath = newLibPath + ';' + oldLibPath;
+        newLibPath += ";" + oldLibPath;
     }
     else
-        newLibPath = wdir + ';' + oldLibPath;
-    execEnv.env["PATH"] = newLibPath;
+    {
+        newLibPath = wdir + ";" + oldLibPath;
+    }
 
-    // **Debugging** Verify the change in execEnv //(ph 2024/12/09)
-    wxString updatedExePath = execEnv.env["PATH"];
-    #endif
+    execEnv.env["PATH"] = newLibPath;
+#endif //__WXMSW__
 
     if (HasDebugLog())
     {
-        m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__,
-                                 __LINE__,
-                                 wxString::Format(_("setting execEnv.env[\"%s\"]=%s"), CB_LIBRARY_ENVVAR, newLibPath),
-                                 dbg_DAP::LogPaneLogger::LineType::Debug);
+        m_pLogger->LogDAPMsgType(
+            __PRETTY_FUNCTION__,
+            __LINE__,
+            wxString::Format(
+                _("setting lldb-dap execEnv.env[\"%s\"]=%s"),
+                CB_LIBRARY_ENVVAR,
+                newLibPath),
+            dbg_DAP::LogPaneLogger::LineType::Debug);
     }
-  #endif // not __WXMAC__
+#endif // !__WXMAC__
 
-    wxString newPythonHomeSetting = GetActiveConfigEx().GetDAP_PythonHomeEnvSetting();
+    const wxString newPythonHomeSetting =
+        GetActiveConfigEx().GetDAP_PythonHomeEnvSetting();
 
-    if (not newPythonHomeSetting.IsEmpty())
+    if (!newPythonHomeSetting.IsEmpty())
     {
+        // PYTHONHOME belongs to lldb-dap.exe only. Do not add it to
+        // m_debuggeeEnv unless the program being debugged explicitly needs it.
         execEnv.env["PYTHONHOME"] = newPythonHomeSetting;
 
-        //(ph 2024/08/27)
         wxString pythonBin = newPythonHomeSetting;
         if (wxDirExists(pythonBin + wxFILE_SEP_PATH + "bin"))
-            pythonBin = pythonBin + wxFILE_SEP_PATH + "bin";
+            pythonBin << wxFILE_SEP_PATH << "bin";
+
         if (platform::windows)
-            execEnv.env[CB_LIBRARY_ENVVAR] = newLibPath +";" + pythonBin;
+            execEnv.env[CB_LIBRARY_ENVVAR] += ";" + pythonBin;
         else
-            execEnv.env[CB_LIBRARY_ENVVAR] = newLibPath +":" + pythonBin;
+            execEnv.env[CB_LIBRARY_ENVVAR] += ":" + pythonBin;
 
         if (HasDebugLog())
         {
-            m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__,
-                                     __LINE__,
-                                     wxString::Format(_("setting execEnv.env[PYTHONHOME]=%s"), newPythonHomeSetting),
-                                     dbg_DAP::LogPaneLogger::LineType::Debug);
+            m_pLogger->LogDAPMsgType(
+                __PRETTY_FUNCTION__,
+                __LINE__,
+                wxString::Format(
+                    _("setting lldb-dap execEnv.env[PYTHONHOME]=%s"),
+                    newPythonHomeSetting),
+                dbg_DAP::LogPaneLogger::LineType::Debug);
         }
     }
 
     if (HasDebugLog())
     {
-        m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__,
-                                 __LINE__,
-                                 wxString::Format(_("\nexecEnv.cwd: %s"), execEnv.cwd),
-                                 dbg_DAP::LogPaneLogger::LineType::Debug);
+        m_pLogger->LogDAPMsgType(
+            __PRETTY_FUNCTION__,
+            __LINE__,
+            wxString::Format(_("\nlldb-dap execEnv.cwd: %s"), execEnv.cwd),
+            dbg_DAP::LogPaneLogger::LineType::Debug);
 
-        for (wxEnvVariableHashMap::iterator it = execEnv.env.begin(); it != execEnv.env.end(); ++it)
+        for (wxEnvVariableHashMap::iterator it = execEnv.env.begin();
+             it != execEnv.env.end();
+             ++it)
         {
-            m_pLogger->LogDAPMsgType("",
-                                     __LINE__,
-                                     wxString::Format("execEnv.env[%s]=%s", it->first, it->second),
-                                     dbg_DAP::LogPaneLogger::LineType::Debug);
+            m_pLogger->LogDAPMsgType(
+                "",
+                __LINE__,
+                wxString::Format(
+                    "lldb-dap execEnv.env[%s]=%s",
+                    it->first,
+                    it->second),
+                dbg_DAP::LogPaneLogger::LineType::Debug);
         }
     }
 
-    // start the dap_debugger process
-    // NOTE: If the debugger does not start check the PYTHONHOME environment variable is set correctly!!!!
-    wxString msg; msg << "Executable: " << dapStartCmd << "\n" << "WorkingDir: " << wdir << "\n"; //(ph 2024/06/09)
-    msg << "PythonHome: " << newPythonHomeSetting;
-    //;cbMessageBox(msg, "LaunchDapDebugger");
+    m_dapPid = wxExecute(
+        dapStartCmd,
+        wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_SHOW_CONSOLE,
+        nullptr,
+        &execEnv);
 
-    m_dapPid = wxExecute(dapStartCmd, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_SHOW_CONSOLE, NULL, &execEnv);
-    m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, wxString::Format(_("finished dapStartCmd: %s , m_dapPid: %ld"), dapStartCmd, m_dapPid), dbg_DAP::LogPaneLogger::LineType::UserDisplay);
+    m_pLogger->LogDAPMsgType(
+        __PRETTY_FUNCTION__,
+        __LINE__,
+        wxString::Format(
+            _("finished dapStartCmd: %s , m_dapPid: %ld"),
+            dapStartCmd,
+            m_dapPid),
+        dbg_DAP::LogPaneLogger::LineType::UserDisplay);
 }
 
 // ----------------------------------------------------------------------------
@@ -1430,7 +1474,8 @@ void Debugger_DAP::EvaluateExpressionCallback(bool success, const wxString& resu
     // AddLog(output);
     Manager::Get()->GetLogManager()->DebugLog(output);
 
-    cb::shared_ptr<dbg_DAP::DAPWatch> pWatch(new dbg_DAP::DAPWatch(m_pProject, m_pLogger, text, true,true));
+    //?cb::shared_ptr<dbg_DAP::DAPWatch> pWatch(new dbg_DAP::DAPWatch(m_pProject, m_pLogger, text, true,true));
+    cb::shared_ptr<dbg_DAP::DAPWatch> pWatch(new dbg_DAP::DAPWatch(m_pProject, m_pLogger, output, true,true));
     pWatch->SetValue(result);
     pWatch->SetType(type);
     bool shown = Manager::Get()->GetDebuggerManager()->GetInterfaceFactory()->ShowValueTooltip(pWatch, evalRect);
@@ -1463,7 +1508,7 @@ void Debugger_DAP::EvaluateExpressionWithCallback(const wxString& token, const w
 void Debugger_DAP::AddTooltipWatch(const wxString& symbol, wxRect const& rect)
 // ----------------------------------------------------------------------------
 {
-
+    return;
 }
 
 // =============================================================================
@@ -2430,11 +2475,20 @@ void Debugger_DAP::OnLaunchResponse(DAPEvent & event)
         {
             m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, wxString::Format(_("Bad Response: %s"), resp->message), dbg_DAP::LogPaneLogger::LineType::Error);
             // launch failed!
-            wxMessageBox("Failed to launch debuggee: " + resp->message, "DAP", wxICON_ERROR | wxOK | wxOK_DEFAULT | wxCENTRE);
+            wxString errorMsg = GetDapErrorMessage(event);
+            if (errorMsg.empty()) errorMsg = _T("undefined");
+            wxMessageBox("Failed to launch debuggee: " + errorMsg, "DAP", wxICON_ERROR | wxOK | wxOK_DEFAULT | wxCENTRE);
             // Reset plugin back to default state!!!!
             DAPDebuggerResetData(dbg_DAP::ResetDataType::ResetData_Normal);
         }
     }
+}
+// ----------------------------------------------------------------------------
+wxString Debugger_DAP::GetDapErrorMessage(DAPEvent& event) // (ph 26/08/11)
+// ----------------------------------------------------------------------------
+{
+    if (event.GetString().IsEmpty()) return wxString();
+    else return event.GetString();
 }
 
 /// DAP server responded to our `initialize` request
@@ -2507,6 +2561,7 @@ void Debugger_DAP::OnInitializeResponse(DAPEvent & event)
             SHOW_RESPONSE_DATA(_("supportSuspendDebuggee: %s"), response_data->capabilities.supportSuspendDebuggee, supportSuspendDebuggee);
             SHOW_RESPONSE_DATA(_("supportsValueFormattingOptions: %s"), response_data->capabilities.supportsValueFormattingOptions, supportsValueFormattingOptions);
             SHOW_RESPONSE_DATA(_("supportsWriteMemoryRequest: %s"), response_data->capabilities.supportsWriteMemoryRequest, supportsWriteMemoryRequest);
+            SHOW_RESPONSE_DATA(_("supportsReadMemoryRequest: %s"), response_data->capabilities.supportsReadMemoryRequest, supportsReadMemoryRequest);
             SHOW_RESPONSE_DATA(_("supportTerminateDebuggee: %s"), response_data->capabilities.supportTerminateDebuggee, supportTerminateDebuggee);
             SHOW_RESPONSE_DATA(_("supportsDisassembleRequest: %s"), response_data->capabilities.supportsDisassembleRequest, supportsDisassembleRequest);
 
@@ -2552,8 +2607,18 @@ void Debugger_DAP::OnInitializeResponse(DAPEvent & event)
 
                 wxSetWorkingDirectory(exeBasePath);
 
-                //-m_dapClient.Launch(std::move(m_DAP_DebuggeeStartCMD), UnixFilename(m_pProject->GetBasePath()));
-                m_dapClient.Launch(std::move(m_DAP_DebuggeeStartCMD), UnixFilename(exeBasePath));
+                // pass the original environment to be used by the debuggee
+                dap::Environment debuggeeEnv; // (ph 2026/08/15)
+
+                const auto pathIt = m_debuggeeEnv.find("PATH");
+                if (pathIt != m_debuggeeEnv.end())
+                {
+                    debuggeeEnv.vars["PATH"] = pathIt->second;
+                }
+
+                m_dapClient.Launch(std::move(m_DAP_DebuggeeStartCMD),
+                   UnixFilename(exeBasePath),
+                   debuggeeEnv);
 
                 Debugger_State::AddState(Debugger_State::eDAPState::Running); //(ph 2024/06/06)
             }//end if (not m_pid_to_attach) //(ph 2025/01/23)
@@ -2566,12 +2631,30 @@ void Debugger_DAP::OnInitializeResponse(DAPEvent & event)
     }
 }
 
-
 // ----------------------------------------------------------------------------
 void Debugger_DAP::OnConfigurationDoneResponse(DAPEvent & event)
 // ----------------------------------------------------------------------------
 {
     m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, _("Received response"), dbg_DAP::LogPaneLogger::LineType::UserDisplay);
+
+    dap::ConfigurationDoneResponse * resp = event.GetDapResponse()->As<dap::ConfigurationDoneResponse>();
+
+    if (resp)
+    {
+        if (resp->success)
+        {
+            m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, _("Good ConfigurationDone Response"), dbg_DAP::LogPaneLogger::LineType::UserDisplay);
+        }
+        else
+        {
+            wxString errMsg = GetDapErrorMessage(event);
+            if (errMsg.empty()) errMsg = _T("undefined");
+            m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, wxString::Format(_("ConfigurationDone Failed: %s"), errMsg), dbg_DAP::LogPaneLogger::LineType::Error);
+            wxMessageBox(_("Failed to launch debugger: ") + errMsg, _("DAP"), wxICON_ERROR | wxOK | wxOK_DEFAULT | wxCENTRE);
+
+            DAPDebuggerResetData(dbg_DAP::ResetDataType::ResetData_Normal);
+        }
+    }
 }
 
 /// DAP server stopped. This can happen for multiple reasons:
@@ -2780,7 +2863,10 @@ void Debugger_DAP::OnBreakpointLocations(DAPEvent & event)
 
         for (const auto & bp : d->breakpoints)
         {
-            m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, _(d->filepath << ":" << bp.line), dbg_DAP::LogPaneLogger::LineType::UserDisplay);
+            m_pLogger->LogDAPMsgType(
+                __PRETTY_FUNCTION__, __LINE__,
+                (d->filepath << ":" << bp.line), dbg_DAP::LogPaneLogger::LineType::UserDisplay
+            );
         }
     }
 }
@@ -2960,7 +3046,7 @@ void Debugger_DAP::OnDisassembleResponse(DAPEvent & event) //(ph 2024/08/26)
                 }
             }
 
-            wxString lineStr = wxString::Format("%d", disasm.line);
+            //wxString lineStr = wxString::Format("%d", disasm.line);
             pDlg->AddAssemblerLine(dbg_DAP::HexStrToBinary(disasm.address), disasm.instruction);
         }//endfor
 
@@ -3074,6 +3160,22 @@ void Debugger_DAP::OnDebugPYWaitingForServerEvent(DAPEvent & event)
 // Linux:  /usr/bin/lldb-vscode-14 -port 12345
 // MACOS:: /usr/local/opt/llvm/bin/lldb-vscode -port 12345
 // --personality=debuging --multiple-instance
+
+// ----------------------------------------------------------------------------
+void Debugger_DAP::OnReadMemoryResponse(DAPEvent & event)
+// ----------------------------------------------------------------------------
+{
+    dap::ReadMemoryResponse* resp = event.GetDapResponse()->As<dap::ReadMemoryResponse>();
+    if (resp && resp->success)
+    {
+        // 'resp->data' contains the base64 encoded memory content
+        Manager::Get()->GetLogManager()->DebugLog("ReadMemory success. Data: " + resp->data);
+    }
+    else if (resp)
+    {
+        Manager::Get()->GetLogManager()->DebugLog("ReadMemory failed: " + resp->message);
+    }
+}
 
 // "==================================================================================================================="
 //       ____   ___ __             ____             _

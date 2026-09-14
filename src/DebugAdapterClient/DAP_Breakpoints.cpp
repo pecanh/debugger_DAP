@@ -1082,8 +1082,8 @@ void DBG_DAP_Breakpoints::OnProcessBreakpointData(const wxString& brkDescription
             brkDescription.substr(brkLookupIndexStart);
             if (not brkLookup.IsEmpty())
             {
-                wxString::size_type brkLookupIndexEnd = brkLookup.find('.');
-                wxString brkID = brkLookup.substr(0, brkLookupIndexEnd);
+                //wxString::size_type brkLookupIndexEnd = brkLookup.find('.');
+                //wxString brkID = brkLookup.substr(0, brkLookupIndexEnd);
             }
         }
 

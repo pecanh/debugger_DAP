@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Debugger DAP Plugin wx3.2.x(64 bit)" />
+		<Option title="Debugger DAP Plugin wx3.3.x(64 bit)" />
 		<Option default_target="plugin" />
 		<Option compiler="gcc" />
 		<Option show_notes="1">
@@ -17,9 +17,9 @@
 		</Option>
 		<Build>
 			<Target title="libwxdap">
-				<Option output="../../../devel32_64/debugger_wxdap" prefix_auto="0" extension_auto="1" />
-				<Option working_dir="../../../devel32_64" />
-				<Option object_output="../../../.objs32_64/debugger_wxdap" />
+				<Option output="../../../devel33_64/debugger_wxdap" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="../../../devel33_64" />
+				<Option object_output="../../../.objs33_64/debugger_wxdap" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createStaticLib="1" />
@@ -40,13 +40,13 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="plugin">
-				<Option output="../../../devel32_64/share/codeblocks/plugins/debugger_dap" prefix_auto="0" extension_auto="1" />
-				<Option working_dir="../../../devel32_64" />
-				<Option object_output="../../../.objs32_64/plugins/debugger_dap" />
+				<Option output="../../../devel33_64/share/codeblocks/plugins/debugger_dap" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="../../../devel33_64" />
+				<Option object_output="../../../.objs33_64/plugins/debugger_dap" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option parameters="--debug-log --no-dde --no-check-associations --multiple-instance --no-splash-screen --verbose -p cbDebug333wk" />
-				<Option host_application="../../../devel32_64/codeblocks.exe" />
+				<Option host_application="../../../devel33_64/codeblocks.exe" />
 				<Option run_host_application_in_terminal="0" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -61,10 +61,10 @@
 				<ExtraCommands>
 					<Add before="cmd /c echo TARGET_OUTPUT_DIR: $(TARGET_OUTPUT_DIR)" />
 					<Add before="cmd /c echo TARGET_OUTPUT_BASENAME: $(TARGET_OUTPUT_BASENAME)" />
-					<Add before="cmd /c echo #WX32_64.lib)\gcc_dll$(WX_CFG: $(#WX32_64.lib)\gcc_dll$(WX_CFG)" />
+					<Add before="cmd /c echo #WX33_64.lib)\gcc_dll$(WX_CFG: $(#WX33_64.lib)\gcc_dll$(WX_CFG)" />
 					<Add after="cmd /c if not exist $(TARGET_OUTPUT_DIR) mkdir $(TARGET_OUTPUT_DIR)" />
-					<Add after="cmd /c if exist ..\..\..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip del ..\..\..\devel32_64\$(TARGET_OUTPUT_BASENAME).zip" />
-					<Add after="zip -jq9 ..\..\..\devel32_64\share\codeblocks\$(TARGET_OUTPUT_BASENAME).zip resources/manifest.xml resources/*.xrc" />
+					<Add after="cmd /c if exist ..\..\..\devel33_64\$(TARGET_OUTPUT_BASENAME).zip del ..\..\..\devel33_64\$(TARGET_OUTPUT_BASENAME).zip" />
+					<Add after="zip -jq9 ..\..\..\devel33_64\share\codeblocks\$(TARGET_OUTPUT_BASENAME).zip resources/manifest.xml resources/*.xrc" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -100,13 +100,13 @@
 			<Add directory="$(#cb)/include" />
 			<Add directory="$(#cb)/include/tinyxml" />
 			<Add directory="$(#cb)/sdk/wxscintilla/include" />
-			<Add directory="$(#WX32_64.include)" />
-			<Add directory="$(#WX32_64.lib)/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
+			<Add directory="$(#WX33_64.include)" />
+			<Add directory="$(#WX33_64.lib)/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
 			<Add directory="F:/usr/Proj/wxWidgets333/include" />
 		</Compiler>
 		<ResourceCompiler>
-			<Add directory="$(#WX32_64.include)" />
-			<Add directory="$(#WX32_64)/lib/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
+			<Add directory="$(#WX33_64.include)" />
+			<Add directory="$(#WX33_64)/lib/gcc_dll$(WX_CFG)/msw$(WX_SUFFIX)" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-mthreads" />
@@ -118,9 +118,9 @@
 			<Add library="ws2_32" />
 			<Add library="codeblocks" />
 			<Add library="debugger_wxdap" />
-			<Add directory="../../../devel32_64" />
-			<Add directory="$(#WX32_64.lib)/gcc_dll$(WX_CFG)" />
-			<Add directory="$(#cb)/devel32_64" />
+			<Add directory="../../../devel33_64" />
+			<Add directory="$(#WX33_64.lib)/gcc_dll$(WX_CFG)" />
+			<Add directory="$(#cb)/devel33_64" />
 		</Linker>
 		<Unit filename="DebugAdapterClient/DAP_Breakpoints.cpp">
 			<Option target="plugin" />

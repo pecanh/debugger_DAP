@@ -1,2 +1,4 @@
 src/.cache/
 src/compile_commands.json
+src/*.bak
+*.7z

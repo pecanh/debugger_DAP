@@ -366,8 +366,8 @@ void DBG_DAP_Watches::ShowWatchProperties(cb::shared_ptr<cbWatch> watch)
 bool DBG_DAP_Watches::SetWatchValue(cb::shared_ptr<cbWatch> watch, const wxString & value)
 // ----------------------------------------------------------------------------
 {
-    // originarily invokde from watches dlg
-    /// Originates from watchesdlg, but is never called
+    // originarily invoked from watches dlg
+    /// Originates from watchesdlg, but is never called anymore
     // Neither GDB/CDB debuggerGDB plugin, nor debuggerGDB_MI plugin ever called this function
     m_pLogger->LogDAPMsgType(__PRETTY_FUNCTION__, __LINE__, _("Functionality is never called!"), dbg_DAP::LogPaneLogger::LineType::Error);
 
@@ -996,7 +996,7 @@ void DBG_DAP_Watches::OnVariablesCheck(DAPEvent &event)
 
             for (const dap::Variable & var : resp->variables)
             {
-                wxString varname = var.name;
+                //wxString varname = var.name;
                 if (symbol.IsSameAs(var.name))
                 {
                     wxString value = var.value.empty() ? "\"\"" : var.value;

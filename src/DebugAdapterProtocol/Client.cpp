@@ -13,6 +13,11 @@
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
 
+namespace {
+
+    bool wxFound(int result){return result != wxNOT_FOUND;};
+}//end namespace
+
 ///----------------------------------------------
 /// Socket
 ///----------------------------------------------
@@ -260,6 +265,7 @@ void dap::Client::OnMessage(Json json)
             ENABLE_FEATURE(supportsRunInTerminalRequest);
             ENABLE_FEATURE(supportsBreakpointLocationsRequest);
             ENABLE_FEATURE(supportsDisassembleRequest);
+            ENABLE_FEATURE(supportsReadMemoryRequest);
             SendDAPEvent(wxEVT_DAP_INITIALIZE_RESPONSE, new dap::InitializeResponse, json);
         }
 
@@ -423,6 +429,10 @@ void dap::Client::OnMessage(Json json)
         {   //(ph 2024/08/26)
             SendDAPEvent(wxEVT_DAP_DISASSEMBLE_RESPONSE, new dap::DisassembleResponse, json);
         }
+        else if (as_response->command == "readMemory")
+        {
+            SendDAPEvent(wxEVT_DAP_READ_MEMORY_RESPONSE, new dap::ReadMemoryResponse, json);
+        }
         else if (as_response->command == "source")
         {
             HandleSourceResponse(json);
@@ -517,6 +527,18 @@ void dap::Client::SendDAPEvent(wxEventType type, ProtocolMessage* dap_message, J
     DAPEvent event(type);
     event.SetAnyObject(ptr);
     event.SetEventObject(this);
+
+    // if response contain an error message, pass it back to the plugin. // (ph 26/08/13)
+    wxString jsonStr = json.ToString(false); // Use false for unformatted JSON
+    int posn = wxNOT_FOUND;
+    if (wxFound(posn = jsonStr.Find(R"("error":{"format":)")) )
+    {
+        jsonStr = jsonStr.Mid(posn+18);     //set beginning of error msg
+        int ending = jsonStr.Find("\",");   //find end of error msg (",)
+        if (wxFound(ending)) jsonStr = jsonStr.Mid(0,ending+1);
+        else jsonStr = jsonStr.BeforeFirst('\n');
+        event.SetString(jsonStr);
+    }
 
     if (owner)
     {
@@ -768,6 +790,22 @@ void dap::Client::BreakpointLocations(const wxString & filepath, int start_line,
     SendRequest(req);
     m_requestIdToFilepath.insert({ req.seq, filepath });
 }
+
+// ----------------------------------------------------------------------------
+void dap::Client::ReadMemory(const wxString& memoryReference, int offset, int count)
+// ----------------------------------------------------------------------------
+{
+    if (not IsSupported(supportsReadMemoryRequest))
+    {
+        return;
+    }
+
+    ReadMemoryRequest req = MakeRequest<ReadMemoryRequest>();
+    req.arguments.memoryReference = memoryReference;
+    req.arguments.offset = offset;
+    req.arguments.count = count;
+    SendRequest(req);
+}
 //(ph 2024/08/19)
 // ----------------------------------------------------------------------------
 void dap::Client::GetDisassemble(uint64_t memAddr, int offset, int instructionOffset,
@@ -939,10 +977,13 @@ void dap::Client::Attach(int pid, const std::vector<wxString>& arguments)
 // ----------------------------------------------------------------------------
 {
     AttachRequest req = MakeRequest<AttachRequest>();
-    for (wxString arg : arguments)
-    {
-        wxString lookee = arg;
-    }
+
+    //    // **Debugging**
+    //    for (wxString arg : arguments)
+    //    {
+    //        wxString lookee = arg;
+    //    }
+
     //?req.arguments.arguments = arguments;
     req.arguments.pid = pid;
     SendRequest(req);

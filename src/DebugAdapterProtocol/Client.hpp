@@ -83,7 +83,8 @@ class WXDLLIMPEXP_DAP Client : public wxEvtHandler
         supportsRunInTerminalRequest = (1 << 20),
         supportsBreakpointLocationsRequest = (1 << 21),
         supportsDisassembleRequest = (1 << 22), //(ph 2024/08/24)
-        supportsGotoRequest = (1 << 23) //(ph 2024/11/12)
+        supportsGotoRequest = (1 << 23), //(ph 2024/11/12)
+        supportsReadMemoryRequest = (1 << 24)
     };
 
 protected:
@@ -323,6 +324,11 @@ public:
      * @brief request list of all breakpoints in a file
      */
     void BreakpointLocations(const wxString& filepath, int start_line, int end_line);
+
+    /**
+     * @brief retrieves a memory range from the debuggee
+     */
+    void ReadMemory(const wxString& memoryReference, int offset, int count);
 
     /**
      * @brief request to load a source and execute callback once the source is loaded. If the `source` contains

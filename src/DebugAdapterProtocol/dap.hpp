@@ -787,6 +787,9 @@ struct WXDLLIMPEXP_DAP Capabilities {
     // The debug adapter supports the `writeMemory` request.
     wxAny supportsWriteMemoryRequest;           // bool
 
+    // The debug adapter supports the `readMemory` request.
+    wxAny supportsReadMemoryRequest;            // bool
+
     // The debug adapter supports the 'disassemble' request.
     wxAny supportsDisassembleRequest;           // bool
 
@@ -1714,6 +1717,35 @@ struct WXDLLIMPEXP_DAP DebugpyWaitingForServerEvent : public Event {
     EVENT_CLASS(DebugpyWaitingForServerEvent, wxEmptyString);
     JSON_SERIALIZE();
 };
+// ----------------------------------------------------------------------------
+//  ReadMemory
+// ----------------------------------------------------------------------------
+
+/// Arguments for 'readMemory' request.
+struct WXDLLIMPEXP_DAP ReadMemoryArguments : public Any {
+    wxString memoryReference;
+    int offset = 0;
+    int count = 0;
+    ANY_CLASS(ReadMemoryArguments);
+    JSON_SERIALIZE();
+};
+
+/// The 'readMemory' request retrieves a memory range from the debuggee.
+struct WXDLLIMPEXP_DAP ReadMemoryRequest : public Request {
+    ReadMemoryArguments arguments;
+    REQUEST_CLASS(ReadMemoryRequest, "readMemory");
+    JSON_SERIALIZE();
+};
+
+/// Response to 'readMemory' request.
+struct WXDLLIMPEXP_DAP ReadMemoryResponse : public Response {
+    wxString address;
+    int unreadableBytes = 0;
+    wxString data; // base64 encoded bytes
+    RESPONSE_CLASS(ReadMemoryResponse, "readMemory");
+    JSON_SERIALIZE();
+};
+
 // ----------------------------------------------------------------------------
 //  Disassemble
 // ----------------------------------------------------------------------------
